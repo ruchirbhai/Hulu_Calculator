@@ -19,8 +19,8 @@ def inp_sanitize(num1, num2):
 # Create homepage App route for the calculator
 # Modify the homepage to show success or error
 @app.route('/')
-def index():
-    return None
+def hello():
+    return 'hello world'
 
 
 # route for using Json
