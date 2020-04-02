@@ -21,9 +21,10 @@ def inp_validation(data):
         raise TypeError(error)
 
     # convert the input data to float, any non-numerical data caught in the general exception
+    app.logger.info("String to float conversion")
     num1 = float(data.get("number_1"))
     num2 = float(data.get("number_2"))
-    app.logger.info(num1, num2)
+    # app.logger.info(num1, num2)
 
     # return validated and converted data back
     return num1, num2
@@ -70,6 +71,7 @@ def subtract():
         num1, num2 = inp_validation(req)
 
         # perform operations on validated data
+        print(num1, num2)
         subtract = num1 - num2
         app.logger.info(subtract)
 
