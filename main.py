@@ -1,30 +1,31 @@
 # Import flask libraries
 from flask import Flask, jsonify, request
+import config
+
 
 # Create the flask app
 app = Flask(__name__)
-# Logger.error, check for flask error, flask info
+config.configure_app(app)
 
 
 # function to validate the input
 def inp_validation(data):
-    app.logger.info("inside Input Validation")
+
+    inp_error = "Invalid input: Expected {\"number_1\": \"number\", \"number_2\": \"number\"}"
 
     # Error 1: Check if the keys are correct expected number_1 and number_2
     if not ("number_1" in data and "number_2" in data):
-        error = "Invalid input: Expected {\"number_1\": \"number\", \"number_2\": \"number\"}"
-        raise TypeError(error)
+        raise TypeError(inp_error)
 
     # Error 2: Ensure that the values are not empty
     if data.get("number_1") == '' or data.get("number_2") == '':
-        error = "Invalid input: Expected {\"number_1\": \"number\", \"number_2\": \"number\"}"
-        raise TypeError(error)
+        raise TypeError(inp_error)
 
     # convert the input data to float, any non-numerical data caught in the general exception
     app.logger.info("String to float conversion")
     num1 = float(data.get("number_1"))
     num2 = float(data.get("number_2"))
-    # app.logger.info(num1, num2)
+    app.logger.debug("{0}, {1}".format(num1, num2))
 
     # return validated and converted data back
     return num1, num2
@@ -42,10 +43,10 @@ def add():
         num1, num2 = inp_validation(req)
 
         # perform operations on validated data
-        add = num1 + num2
-        app.logger.info(add)
+        result = num1 + num2
+        app.logger.info("Operation: add num1: {0}, num2: {1} , result: {2}".format(num1, num2, result))
 
-        return jsonify({"result": add}), 200
+        return jsonify({"result": result}), 200
 
     except TypeError as e:
         app.logger.error(str(e))
@@ -71,11 +72,10 @@ def subtract():
         num1, num2 = inp_validation(req)
 
         # perform operations on validated data
-        print(num1, num2)
-        subtract = num1 - num2
-        app.logger.info(subtract)
+        result = num1 - num2
+        app.logger.info("Operation: subtract num1: {0}, num2: {1} , result: {2}".format(num1, num2, result))
 
-        return jsonify({"result": subtract}), 200
+        return jsonify({"result": result}), 200
 
     except TypeError as e:
         app.logger.error(str(e))
@@ -101,10 +101,10 @@ def multiply():
         num1, num2 = inp_validation(req)
 
         # perform operations on validated data
-        multiply = num1 * num2
-        app.logger.info(multiply)
+        result = num1 * num2
+        app.logger.info("Operation: multiply num1: {0}, num2: {1} , result: {2}".format(num1, num2, result))
 
-        return jsonify({"result": multiply}), 200
+        return jsonify({"result": result}), 200
 
     except TypeError as e:
         app.logger.error(str(e))
@@ -130,10 +130,10 @@ def divide():
         num1, num2 = inp_validation(req)
 
         # perform operations on validated data
-        divide = num1 / num2
-        app.logger.info(divide)
+        result = num1 / num2
+        app.logger.info("Operation: divide num1: {0}, num2: {1} , result: {2}".format(num1, num2, result))
 
-        return jsonify({"result": divide}), 200
+        return jsonify({"result": result}), 200
 
     except TypeError as e:
         app.logger.error(str(e))
@@ -143,11 +143,14 @@ def divide():
         app.logger.error(str(e))
         return jsonify({"error": str(e)}), 400
 
+    except ZeroDivisionError as e:
+        app.logger.error(str(e))
+        return jsonify({"error": str(e)}), 400
+
     except Exception as e:
         app.logger.error(e)
         return jsonify({"error": str(e)}), 400
 
 
 if __name__ == ' __main__':
-    app.debug = True
-    app.run()
+    app.run(host='0.0.0.0', port=5000)

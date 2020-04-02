@@ -1,4 +1,4 @@
-from app import app
+from main import app
 import pytest
 
 
@@ -6,8 +6,34 @@ import pytest
 def client():
     app.testing = True
 
-    with app.test_client() as client:
-        return client
+    with app.test_client() as t_client:
+        return t_client
+
+
+def test_type_error_json_key_number1(client):
+    app.testing = True
+    # test_error #1: pass number1 instead of expected number_1
+    response = client.post('/add', json={
+        'number1': '1', 'number_2': '2'
+    })
+    data = response.get_json()
+    error_invalid = "Invalid input: Expected {\"number_1\": \"number\", \"number_2\": \"number\"}"
+
+    assert response.status_code == 400
+    assert data['error'] == error_invalid
+
+
+def test_error_json_data_empty(client):
+    app.testing = True
+    # test_error #1: pass number_2 with no data
+    response = client.post('/add', json={
+        'number_1': '1', 'number_2': ''
+    })
+    data = response.get_json()
+    error_invalid = "Invalid input: Expected {\"number_1\": \"number\", \"number_2\": \"number\"}"
+
+    assert response.status_code == 400
+    assert data['error'] == error_invalid
 
 
 def test1_add_positive_int(client):
@@ -17,6 +43,8 @@ def test1_add_positive_int(client):
         'number_1': '1', 'number_2': '2'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == 3.0
 
 
@@ -27,6 +55,8 @@ def test2_add_mix(client):
         'number_1': '-123000000000000000000000000000', 'number_2': '500.0'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == -1.23e+29
 
 
@@ -37,6 +67,8 @@ def test3_add_float_out_zero(client):
         'number_1': '-2.0', 'number_2': '2'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == 0.0
 
 
@@ -47,6 +79,8 @@ def test1_subtract_positive_int(client):
         'number_1': '1', 'number_2': '2'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == -1.0
 
 
@@ -57,6 +91,8 @@ def test2_subtract_negative_floats(client):
         'number_1': '-1.8', 'number_2': '-2.4'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == 0.5999999999999999
 
 
@@ -67,6 +103,8 @@ def test3_subtract_negative_mix(client):
         'number_1': '2.0', 'number_2': '2'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == 0.0
 
 
@@ -77,6 +115,8 @@ def test4_subtract_negative_mix(client):
         'number_1': '-2.0', 'number_2': '2'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == -4.0
 
 
@@ -87,6 +127,8 @@ def test1_multiply_positive_mix(client):
         'number_1': '10', 'number_2': '15.0'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == 150.0
 
 
@@ -97,6 +139,8 @@ def test2_multiply_negative_float(client):
         'number_1': '-10.0', 'number_2': '-25.0'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == 250.0
 
 
@@ -107,6 +151,8 @@ def test3_multiply_mix(client):
         'number_1': '2.0', 'number_2': '-2'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == -4.0
 
 
@@ -117,6 +163,8 @@ def test4_multiply_zero(client):
         'number_1': '-100.0', 'number_2': '0'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == 0.0
 
 
@@ -127,6 +175,8 @@ def test1_divide_positive_mix(client):
         'number_1': '15', 'number_2': '2.0'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == 7.5
 
 
@@ -137,6 +187,8 @@ def test2_divide_negative_float(client):
         'number_1': '-50.0', 'number_2': '-25.0'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == 2.0
 
 
@@ -147,6 +199,8 @@ def test3_divide_mix(client):
         'number_1': '5', 'number_2': '-9.0'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == -0.5555555555555556
 
 
@@ -157,4 +211,6 @@ def test4_divide_negative_float(client):
         'number_1': '-100.0', 'number_2': '500'
     })
     data = response.get_json()
+
+    assert response.status_code == 200
     assert data['result'] == -0.2
