@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # function to validate the input
 def inp_validation(data):
-    app.logger.error("inside Input Validation")
+    app.logger.info("inside Input Validation")
 
     # Error 1: Check if the keys are correct expected number_1 and number_2
     if not ("number_1" in data and "number_2" in data):
@@ -23,7 +23,7 @@ def inp_validation(data):
     # convert the input data to float, any non-numerical data caught in the general exception
     num1 = float(data.get("number_1"))
     num2 = float(data.get("number_2"))
-    app.logger.error(num1, num2)
+    app.logger.info(num1, num2)
 
     # return validated and converted data back
     return num1, num2
@@ -33,7 +33,7 @@ def inp_validation(data):
 @app.route('/add', methods=['POST'])
 def add():
     try:
-        app.logger.error("Calling add")
+        app.logger.info("Calling add")
         # Request data in Json format, any JSON formatting issues caught by general Exception
         req = request.get_json()
 
@@ -42,7 +42,7 @@ def add():
 
         # perform operations on validated data
         add = num1 + num2
-        app.logger.error(add)
+        app.logger.info(add)
 
         return jsonify({"result": add}), 200
 
@@ -61,56 +61,89 @@ def add():
 
 @app.route('/subtract', methods=['POST'])
 def subtract():
-    # add this to try catch,
-    if request.is_json:
+    try:
+        app.logger.info("Calling subtract")
+        # Request data in Json format, any JSON formatting issues caught by general Exception
         req = request.get_json()
-        num1 = float(req.get("number_1"))
-        num2 = float(req.get("number_2"))
 
-        add = num1 - num2
-        res = jsonify(add)
+        # Send values for validation
+        num1, num2 = inp_validation(req)
 
-        return res, 200
-    else:
-        res = jsonify({"error": "No data recieved"})
-        return res, 400
+        # perform operations on validated data
+        subtract = num1 - num2
+        app.logger.info(subtract)
+
+        return jsonify({"result": subtract}), 200
+
+    except TypeError as e:
+        app.logger.error(str(e))
+        return jsonify({"error": str(e)}), 400
+
+    except ValueError as e:
+        app.logger.error(str(e))
+        return jsonify({"error": str(e)}), 400
+
+    except Exception as e:
+        app.logger.error(e)
+        return jsonify({"error": str(e)}), 400
+
 
 @app.route('/multiply', methods=['POST'])
 def multiply():
-    # add this to try catch,
-    # Error 1: for an empty input get ValueError: could not convert string to float:
-    # Error 2: check if input in json format
-    if request.is_json:
+    try:
+        app.logger.info("Calling multiply")
+        # Request data in Json format, any JSON formatting issues caught by general Exception
         req = request.get_json()
-        num1 = float(req.get("number_1"))
-        num2 = float(req.get("number_2"))
 
-        add = num1 * num2
-        res = jsonify(add)
+        # Send values for validation
+        num1, num2 = inp_validation(req)
 
-        return res, 200
-    else:
-        res = jsonify({"error": "No data recieved"})
-        return res, 400
+        # perform operations on validated data
+        multiply = num1 * num2
+        app.logger.info(multiply)
+
+        return jsonify({"result": multiply}), 200
+
+    except TypeError as e:
+        app.logger.error(str(e))
+        return jsonify({"error": str(e)}), 400
+
+    except ValueError as e:
+        app.logger.error(str(e))
+        return jsonify({"error": str(e)}), 400
+
+    except Exception as e:
+        app.logger.error(e)
+        return jsonify({"error": str(e)}), 400
+
 
 @app.route('/divide', methods=['POST'])
 def divide():
-    # add this to try catch,
-    # Error 1: divide by zero
-    if request.is_json:
+    try:
+        app.logger.info("Calling divide")
+        # Request data in Json format, any JSON formatting issues caught by general Exception
         req = request.get_json()
-        num1 = float(req.get("number_1"))
-        num2 = float(req.get("number_2"))
 
-        if num2 == 0:
-            raise ValueError("Cannot divide by Zero!")
-        add = num1 / num2
-        res = jsonify(add)
+        # Send values for validation
+        num1, num2 = inp_validation(req)
 
-        return res, 200
-    else:
-        res = jsonify({"error": "No data recieved"})
-        return res, 400
+        # perform operations on validated data
+        divide = num1 / num2
+        app.logger.info(divide)
+
+        return jsonify({"result": divide}), 200
+
+    except TypeError as e:
+        app.logger.error(str(e))
+        return jsonify({"error": str(e)}), 400
+
+    except ValueError as e:
+        app.logger.error(str(e))
+        return jsonify({"error": str(e)}), 400
+
+    except Exception as e:
+        app.logger.error(e)
+        return jsonify({"error": str(e)}), 400
 
 
 if __name__ == ' __main__':
