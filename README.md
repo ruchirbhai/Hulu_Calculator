@@ -3,7 +3,7 @@
  This is a coding exercise that entails writing a small microservice along with tests to exercise that microservice.
 
 ## Demo
-Here is a working demo hosted on GCP app engine: https://hulucalc.wl.r.appspot.com/<operations>
+Here is a working demo hosted on GCP app engine: https://hulucalc.wl.r.appspot.com/<operations> <br >
 operations available: /add, /substract, /multiply, /divide
 
 Github Code: https://github.com/ruchirbhai/Hulu_Calculator
